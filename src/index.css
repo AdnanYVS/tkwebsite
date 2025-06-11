@@ -1,0 +1,107 @@
+@tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 224 71.4% 4.1%;
+        --card: 0 0% 100%;
+        --card-foreground: 224 71.4% 4.1%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 224 71.4% 4.1%;
+        --primary: 142.1 76.2% 36.3%; /* Adjusted Green */
+        --primary-foreground: 355.7 100% 97.3%;
+        --secondary: 35.5 91.7% 32.9%; /* Adjusted Brown/Orange */
+        --secondary-foreground: 355.7 100% 97.3%;
+        --muted: 220 14.3% 95.9%;
+        --muted-foreground: 220 8.9% 46.1%;
+        --accent: 220 14.3% 95.9%;
+        --accent-foreground: 220 8.9% 46.1%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 60 9.1% 97.8%;
+        --border: 220 13% 91%;
+        --input: 220 13% 91%;
+        --ring: 142.1 76.2% 36.3%; /* Adjusted Green for focus rings */
+        --radius: 0.75rem;
+      }
+
+      .dark {
+        --background: 224 71.4% 4.1%;
+        --foreground: 60 9.1% 97.8%;
+        --card: 224 71.4% 4.1%;
+        --card-foreground: 60 9.1% 97.8%;
+        --popover: 224 71.4% 4.1%;
+        --popover-foreground: 60 9.1% 97.8%;
+        --primary: 142.1 76.2% 36.3%;
+        --primary-foreground: 355.7 100% 97.3%;
+        --secondary: 35.5 91.7% 32.9%;
+        --secondary-foreground: 355.7 100% 97.3%;
+        --muted: 215 27.9% 16.9%;
+        --muted-foreground: 215 20.2% 65.1%;
+        --accent: 215 27.9% 16.9%;
+        --accent-foreground: 215 20.2% 65.1%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 85.7% 97.3%;
+        --border: 215 27.9% 16.9%;
+        --input: 215 27.9% 16.9%;
+        --ring: 142.1 76.2% 36.3%;
+      }
+    }
+
+    @layer base {
+      * {
+        @apply border-border;
+      }
+      body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', sans-serif;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        @apply font-bold;
+      }
+    }
+
+    /* Custom scrollbar for a more modern look */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: hsl(var(--muted));
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: hsl(var(--primary) / 0.7);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: hsl(var(--primary));
+    }
+
+    /* Basic styling for blog content */
+    .blog-content p {
+      @apply mb-4;
+    }
+    .blog-content ul {
+      @apply mb-4 pl-6;
+    }
+    .blog-content li {
+      @apply mb-2;
+    }
+    .blog-content strong {
+      @apply font-semibold text-gray-800;
+    }
+    .blog-content a {
+      @apply text-primary hover:underline;
+    }
+    .blog-content img-replace {
+      @apply my-6 rounded-lg shadow-md;
+    }
+    .blog-content figure {
+      @apply my-6;
+    }
+    .blog-content figcaption {
+      @apply text-center text-sm text-gray-500 mt-2;
+    }
