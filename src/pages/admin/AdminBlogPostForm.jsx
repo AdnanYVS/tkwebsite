@@ -9,6 +9,7 @@ import { Loader2, Save, ArrowLeft, UploadCloud, AlertTriangle, Image as ImageIco
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Dosya adını güvenli hale getiren fonksiyon
 function slugifyFileName(fileName) {
@@ -84,6 +85,7 @@ const AdminBlogPostForm = () => {
   const [formError, setFormError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [authors, setAuthors] = useState([]);
 
   useEffect(() => {
     if (isEditing) {
@@ -136,7 +138,34 @@ const AdminBlogPostForm = () => {
       };
       fetchPost();
     }
+    fetchAuthors();
   }, [id, isEditing, navigate, toast]);
+
+  const fetchAuthors = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('authors')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setAuthors(data || []);
+    } catch (error) {
+      console.error('Error fetching authors:', error);
+      toast({
+        title: 'Hata',
+        description: 'Yazarlar yüklenirken bir hata oluştu.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleAuthorChange = (authorId) => {
+    const selectedAuthor = authors.find(a => a.id === authorId);
+    if (selectedAuthor) {
+      setAuthor(selectedAuthor.name);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -484,14 +513,18 @@ return {
                 <Label htmlFor="author" className="font-semibold text-gray-700">
                   Yazar <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="author"
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="Yazının yazarı..."
-                  required
-                  className="mt-1"
-                />
+                <Select onValueChange={handleAuthorChange} value={author}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Yazar seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {authors.map((author) => (
+                      <SelectItem key={author.id} value={author.id}>
+                        {author.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>

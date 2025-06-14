@@ -23,12 +23,14 @@ const HomePage = () => {
     'mission_item2_title', 'mission_item2_text',
     'mission_item3_title', 'mission_item3_text',
     'services_section_title', 'services_section_intro',
-    'service1_title', 'service1_description',
-    'service2_title', 'service2_description',
-    'service3_title', 'service3_description',
-    'service4_title', 'service4_description',
+    'service_1_title', 'service_1_description',
+    'service_2_title', 'service_2_description',
+    'service_3_title', 'service_3_description',
+    'service_4_title', 'service_4_description',
     'cta_section_title', 'cta_section_intro',
   ];
+
+  console.log('HomePage contentKeys:', contentKeys);
 
   const { content, loading: contentLoading, error: contentError } = useSiteContent(contentKeys);
   const [homepageImages, setHomepageImages] = React.useState({});
@@ -54,6 +56,8 @@ const HomePage = () => {
     };
     fetchHomepageImages();
   }, []);
+
+  console.log('HomePage loaded content:', content);
 
   if (contentLoading) {
     return (

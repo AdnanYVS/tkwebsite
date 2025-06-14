@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Youtube, ArrowRight, Leaf, Zap } from 'lucide-react';
+import { Youtube, ArrowRight, Leaf, Zap, Linkedin, Instagram, Facebook } from 'lucide-react';
 
 const HeroSection = ({ content, imageUrl }) => {
   const mainTitle = content?.hero_main_title?.value || "Kafa Dengi Tarım";
@@ -18,12 +18,12 @@ const HeroSection = ({ content, imageUrl }) => {
     textColor: 'text-gray-100'
   };
 
-  const youtubeButtonText = content?.hero_youtube_button_text?.value || "YouTube Kanalımıza Abone Olun";
-  const youtubeButtonStyles = content?.hero_youtube_button_text?.styles || {
-    fontWeight: 'semibold',
-    fontSize: 'text-base',
-    textColor: 'text-green-700'
-  };
+  const socialLinks = [
+    { icon: <Linkedin size={24} />, href: "https://www.linkedin.com/company/tarım-kafası", label: "LinkedIn" },
+    { icon: <Instagram size={24} />, href: "https://www.instagram.com/tarimkafasi/", label: "Instagram" },
+    { icon: <Facebook size={24} />, href: "https://www.facebook.com/profile.php?id=61576552179639", label: "Facebook" },
+    { icon: <Youtube size={24} />, href: "https://www.youtube.com/@tarimkafasi", label: "YouTube" },
+  ];
 
   return (
     <section className="relative py-20 md:py-32 bg-gradient-to-br from-green-700 via-green-800 to-emerald-900 text-white overflow-hidden">
@@ -54,21 +54,23 @@ const HeroSection = ({ content, imageUrl }) => {
             dangerouslySetInnerHTML={{ __html: subtitle.replace(/\n/g, '<br />') }}
           />
           <motion.div 
-            className="flex justify-center items-center"
+            className="flex justify-center items-center space-x-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
-            <Button 
-              size="lg" 
-              className={`bg-white hover:bg-gray-100 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group w-full sm:w-auto ${youtubeButtonStyles.textColor}`}
-              onClick={() => window.open('https://youtube.com/@tarimkafasi', '_blank', 'noopener,noreferrer')}
-            >
-              <span className={`${youtubeButtonStyles.fontSize} ${youtubeButtonStyles.fontWeight}`}>
-                {youtubeButtonText}
-              </span>
-              <Youtube className="ml-2 h-5 w-5 text-red-600 group-hover:animate-pulse transition-transform" />
-            </Button>
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
+                aria-label={link.label}
+              >
+                {link.icon}
+              </a>
+            ))}
           </motion.div>
         </motion.div>
       </div>

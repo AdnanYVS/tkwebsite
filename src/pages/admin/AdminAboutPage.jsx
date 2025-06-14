@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, UploadCloud, X } from 'lucide-react';
 import useAboutContent from '@/hooks/useAboutContent';
+import { supabase } from '@/lib/supabaseClient';
+import { useToast } from '@/components/ui/use-toast';
+
+const BUCKET = 'team-members';
 
 const AdminAboutPage = () => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     hero_title: '',
     hero_subtitle: '',
@@ -21,6 +26,7 @@ const AdminAboutPage = () => {
 
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const contentKeys = [
     'hero_title',
@@ -122,6 +128,91 @@ const AdminAboutPage = () => {
     }
   };
 
+  const handleFileUpload = async (file, index) => {
+    try {
+      setUploading(true);
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: 'Hata',
+          description: 'Lütfen geçerli bir görsel dosyası seçin.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'Hata',
+          description: 'Görsel boyutu 5MB\'dan küçük olmalıdır.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      // Create a unique file name
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      // Upload file to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(BUCKET)
+        .getPublicUrl(filePath);
+
+      // Update team member's image URL
+      handleTeamMemberChange(index, 'image', publicUrl);
+      
+      toast({
+        title: 'Başarılı',
+        description: 'Fotoğraf başarıyla yüklendi.',
+        variant: 'success'
+      });
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast({
+        title: 'Hata',
+        description: 'Fotoğraf yüklenirken bir hata oluştu: ' + error.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleFileUpload(file, index);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleFileSelect = (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFileUpload(file, index);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -137,7 +228,7 @@ const AdminAboutPage = () => {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-green-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {saving ? (
             <>
@@ -394,14 +485,47 @@ const AdminAboutPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fotoğraf URL
+                      Fotoğraf
                     </label>
-                    <input
-                      type="text"
-                      value={member.image}
-                      onChange={(e) => handleTeamMemberChange(index, 'image', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-500 transition-all duration-300"
-                    />
+                    <div
+                      className={`relative border-2 border-dashed rounded-lg p-4 text-center ${
+                        member.image ? 'border-primary-300' : 'border-gray-300'
+                      }`}
+                      onDrop={(e) => handleDrop(e, index)}
+                      onDragOver={handleDragOver}
+                    >
+                      {member.image ? (
+                        <div className="relative">
+                          <img
+                            src={member.image}
+                            alt={member.name}
+                            className="w-32 h-32 object-cover rounded-lg mx-auto"
+                          />
+                          <button
+                            onClick={() => handleTeamMemberChange(index, 'image', '')}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                          <div className="text-sm text-gray-600">
+                            <span className="font-medium text-primary-600 hover:text-primary-500">
+                              Fotoğraf yüklemek için tıklayın
+                            </span>{' '}
+                            veya sürükleyip bırakın
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileSelect(e, index)}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

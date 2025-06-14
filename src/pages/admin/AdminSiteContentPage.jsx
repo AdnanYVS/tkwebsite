@@ -251,6 +251,45 @@ const AdminSiteContentPage = () => {
 
   const contentKeys = Object.keys(contentManagementConfig);
 
+  const initializeServicesContent = async () => {
+    try {
+      const defaultServicesContent = [
+        { content_key: 'service_1_title', content_value: 'Stratejik Pazarlama' },
+        { content_key: 'service_1_description', content_value: 'Ürünlerinizi doğru kitlelere ulaştırmak için veri odaklı pazarlama stratejileri geliştiriyoruz. Dijital pazarlama, sosyal medya yönetimi ve pazar analizi konularında yanınızdayız.' },
+        { content_key: 'service_2_title', content_value: 'Markalaşma ve Kimlik' },
+        { content_key: 'service_2_description', content_value: 'Tarım işletmeniz için güçlü bir marka kimliği oluşturuyoruz. Logo tasarımından ambalajlamaya, hikaye anlatımından kurumsal kimliğe kadar tüm süreçlerde size özel çözümler sunuyoruz.' },
+        { content_key: 'service_3_title', content_value: 'Eğitim ve Danışmanlık' },
+        { content_key: 'service_3_description', content_value: 'Modern tarım teknikleri, sürdürülebilir uygulamalar ve iş geliştirme konularında kapsamlı eğitim programları ve birebir danışmanlık hizmetleri sunuyoruz.' },
+        { content_key: 'service_4_title', content_value: 'Proje Geliştirme' },
+        { content_key: 'service_4_description', content_value: 'Tarım projelerinizin fikir aşamasından uygulamaya geçirilmesine kadar tüm süreçlerde yanınızdayız. Fizibilite çalışmaları, fon bulma ve proje yönetimi konularında destek sağlıyoruz.' },
+        { content_key: 'services_section_title', content_value: 'Hizmetlerimizle Tarımda Fark Yaratın' },
+        { content_key: 'services_section_intro', content_value: 'Tarım işletmenizin potansiyelini en üst düzeye çıkarmak için kapsamlı ve yenilikçi hizmetler sunuyoruz.' }
+      ];
+
+      const { error } = await supabase
+        .from('site_content')
+        .upsert(defaultServicesContent, { onConflict: 'content_key' });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Başarılı!',
+        description: 'Hizmetler bölümü içeriği başarıyla oluşturuldu.',
+        variant: 'success'
+      });
+
+      // Refresh content after initialization
+      fetchContent();
+    } catch (error) {
+      console.error('Error initializing services content:', error);
+      toast({
+        title: 'Hata!',
+        description: 'Hizmetler bölümü içeriği oluşturulurken bir hata oluştu.',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const fetchContent = useCallback(async () => {
     setLoading(true);
     try {
@@ -261,12 +300,23 @@ const AdminSiteContentPage = () => {
 
       if (error) throw error;
 
+      console.log('Fetched content from database:', data);
+
       const contentData = {};
       data.forEach(item => {
         contentData[item.content_key] = item.content_value || '';
       });
 
+      console.log('Processed content data:', contentData);
       setContent(contentData);
+
+      // Check if services content exists
+      const servicesKeys = contentKeys.filter(key => key.startsWith('service'));
+      const hasServicesContent = servicesKeys.every(key => contentData[key]);
+      
+      if (!hasServicesContent) {
+        await initializeServicesContent();
+      }
     } catch (error) {
       console.error('Error fetching content:', error);
       toast({
@@ -379,23 +429,23 @@ const AdminSiteContentPage = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Site İçerikleri</h1>
-        <Button
+        <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary text-white hover:bg-primary/90"
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-green-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {saving ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
               Kaydediliyor...
             </>
           ) : (
             <>
-              <Save className="mr-2 h-4 w-4" />
-              Tümünü Kaydet
+              <Save className="h-5 w-5" />
+              Kaydet
             </>
           )}
-        </Button>
+        </button>
       </div>
 
       <div className="space-y-8">

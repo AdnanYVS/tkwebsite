@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate, Outlet, Routes, Route, Navigate } from 'rea
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { LayoutDashboard, Newspaper, FileText, LogOut, Menu, X, UserCircle, ChevronDown, ExternalLink, Info } from 'lucide-react';
+import { LayoutDashboard, Newspaper, FileText, LogOut, Menu, X, UserCircle, ChevronDown, ExternalLink, Info, Settings, Image, Users, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     DropdownMenu,
@@ -23,6 +23,7 @@ import AdminSeoPage from '@/pages/admin/AdminSeoPage';
 import AdminHomepageImages from '@/pages/admin/AdminHomepageImages';
 import AdminReferencesPage from '@/pages/admin/AdminReferencesPage';
 import AdminAboutPage from '@/pages/admin/AdminAboutPage';
+import AdminAuthorsPage from '@/pages/admin/AdminAuthorsPage';
 
 
 const AdminLayout = ({ user }) => {
@@ -44,10 +45,11 @@ const AdminLayout = ({ user }) => {
     const navItems = [
         { name: 'Panel', href: '', icon: LayoutDashboard, exact: true }, 
         { name: 'Blog Yazıları', href: 'blog', icon: Newspaper },
+        { name: 'Yazarlar', href: 'authors', icon: Users },
         { name: 'Site İçerikleri', href: 'site-content', icon: FileText },
         { name: 'Hakkımızda', href: 'about', icon: Info },
-        { name: 'SEO', href: 'seo', icon: FileText },
-        { name: 'Ana Sayfa Görselleri', href: 'homepage-images', icon: FileText },
+        { name: 'SEO', href: 'seo', icon: Settings },
+        { name: 'Ana Sayfa Görselleri', href: 'homepage-images', icon: Image },
         { name: 'Referans Logoları', href: 'references', icon: FileText },
     ];
     
@@ -164,6 +166,7 @@ const AdminLayout = ({ user }) => {
                         <Route path="blog" element={<AdminBlogPage />} />
                         <Route path="blog/new" element={<AdminBlogPostForm />} />
                         <Route path="blog/edit/:id" element={<AdminBlogPostForm />} />
+                        <Route path="authors" element={<AdminAuthorsPage />} />
                         <Route path="site-content" element={<AdminSiteContentPage />} />
                         <Route path="about" element={<AdminAboutPage />} />
                         <Route path="seo" element={<AdminSeoPage />} />

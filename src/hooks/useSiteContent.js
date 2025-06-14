@@ -14,10 +14,13 @@ const useSiteContent = (keys) => {
       setLoading(true);
       setError(null);
 
+      console.log('useSiteContent - Requested keys:', keys); // Debug log
+
       // Check cache first if not forcing refresh
       if (!forceRefresh) {
         const cachedData = cache.get(keys.join(','));
         if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
+          console.log('useSiteContent - Using cached data:', cachedData.data); // Debug log
           setContent(cachedData.data);
           setLoading(false);
           return;
@@ -34,6 +37,8 @@ const useSiteContent = (keys) => {
       
       if (dbError) throw dbError;
 
+      console.log('useSiteContent - Fetched data from database:', data); // Debug log
+
       const fetchedContent = {};
       if (data) {
         data.forEach(item => {
@@ -49,6 +54,8 @@ const useSiteContent = (keys) => {
           }
         });
       }
+
+      console.log('useSiteContent - Processed content:', fetchedContent); // Debug log
 
       // Update cache
       cache.set(keys.join(','), {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 import useAboutContent from '@/hooks/useAboutContent';
@@ -126,8 +126,7 @@ const AboutPage = () => {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="absolute inset-0 bg-black/50" />
+      <section className="relative py-20 bg-[#14532d] text-white">
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -127,7 +127,7 @@ import React, { useState, useEffect } from 'react';
           </Helmet>
       
           <motion.article 
-            className="container mx-auto max-w-4xl px-4 py-12 md:py-20"
+            className="container mx-auto max-w-4xl px-4 py-12 md:py-20 bg-gray-50 rounded-xl shadow-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -189,6 +189,64 @@ import React, { useState, useEffect } from 'react';
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             />
+
+            {/* Yazar Bilgisi */}
+            <motion.div
+              className="mt-12 p-6 bg-white rounded-lg shadow-md"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-grow">
+                  <h3 className="text-xl font-semibold text-gray-800">{post.author || 'Tarım Kafası'}</h3>
+                  <p className="text-sm text-gray-600">{post.author_title || 'Yazar'}</p>
+                  {post.author_bio && (
+                    <p className="mt-2 text-gray-600 text-sm leading-relaxed">{post.author_bio}</p>
+                  )}
+                  {post.author_education && (
+                    <div className="mt-2">
+                      <h4 className="text-sm font-semibold text-gray-700">Eğitim</h4>
+                      <p className="text-sm text-gray-600 mt-1">{post.author_education}</p>
+                    </div>
+                  )}
+                  <div className="flex space-x-3 mt-3">
+                    {post.author_linkedin && (
+                      <a
+                        href={post.author_linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-primary transition-colors"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                      </a>
+                    )}
+                    {post.author_twitter && (
+                      <a
+                        href={post.author_twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-primary transition-colors"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                </div>
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary flex-shrink-0">
+                  <img
+                    src={post.author_image_url || `https://source.unsplash.com/random/200x200/?portrait,${encodeURIComponent(post.author || 'Tarım Kafası')}`}
+                    alt={post.author || 'Tarım Kafası'}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
             {post?.view_count !== undefined && (
              <div className="mt-8 text-sm text-gray-500">
               👁️ Bu yazı {post.view_count} kez görüntülendi.
